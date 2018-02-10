@@ -1,0 +1,372 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\oddsidemargin 0mm
+\evensidemargin 0mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+\pagestyle {plain}
+\pagenumbering{arabic}
+\newcounter{stepnum}
+\title{Assignment 3: Part 1}
+\author{COMP SCI 2ME3 and SFWR ENG 2AA4}
+\begin {document}
+\maketitle
+\newpage
+
+
+\section* {Constants Module}
+\subsection*{Module}
+Constants
+\subsection* {Uses}
+N/A
+\subsection* {Syntax}
+\subsubsection* {Exported Constants}
+MAX\_X = 180 {\it //dimension in the x-direction of the problem area}\\
+MAX\_Y = 160 {\it //dimension in the y-direction of the problem area}\\ 
+TOLERANCE = 5 {\it //space allowance around obstacles}\\
+VELOCITY\_LINEAR = 15 {\it //speed of the robot when driving straight}\\
+VELOCITY\_ANGULAR = 30 {\it //speed of the robot when turing rad}
+\subsubsection* {Exported Access Programs}
+none
+\subsection* {Semantics}
+\subsubsection* {State Variables}
+none
+\subsubsection* {State Invariant}
+none
+\newpage
+
+
+\section* {Point ADT Module}
+\subsection*{Template Module}
+PointT
+\subsection* {Uses}
+Constants
+\subsection* {Syntax}
+\subsubsection* {Exported Types}
+PointT = ?
+\subsubsection* {Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+PointT & real, real & PointT & InvalidPointException\\
+\hline
+xcrd & ~ & real & ~\\
+\hline
+ycrd & ~ & real & ~\\
+\hline
+dist & PointT & real & ~\\
+\hline
+\end{tabular}
+\subsection* {Semantics}
+\subsubsection* {State Variables}
+$xc$: real\\
+$yc$: real
+\subsubsection* {State Invariant}
+none
+\subsubsection* {Assumptions}
+The constructor PointT is called for each abstract object before any other access routine is called for that
+object.  The constructor cannot be called on an existing object.
+\subsubsection* {Access Routine Semantics}
+PointT($x, y$):
+\begin{itemize}
+\item transition: $xc, yc := x, y$
+\item output: $out := \mathit{self}$
+\item exception
+ $exc := ((\neg(0 \leq x \leq \mbox{Contants.MAX\_X}) \vee \neg(0 \leq y \leq \mbox{Constants.MAX\_Y})) \Rightarrow
+\mbox{InvalidPointException})$
+\end{itemize}
+\noindent xcrd():
+\begin{itemize}
+\item output: $out := xc$
+\item exception: none
+\end{itemize}
+\noindent ycrd():
+\begin{itemize}
+\item output: $out := yc$
+\item exception: none
+\end{itemize}
+\noindent dist($p$):
+\begin{itemize}
+\item output: $out := \sqrt{(\mathit{self}.xc - p.xc)^2 + (\mathit{self}.yc - p.yc)^2}$
+\item exception: none
+\end{itemize}
+\newpage
+
+
+\section* {Region Module}
+\subsection* {Template Module}
+RegionT
+\subsection* {Uses}
+PointT, Constants
+\subsection* {Syntax}
+\subsubsection* {Exported Types}
+RegionT = ?
+\subsubsection* {Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+RegionT & PointT, real, real & RegionT & InvalidRegionException\\
+\hline
+pointInRegion & PointT & boolean & ~\\
+\hline 
+\end{tabular}
+\subsection* {Semantics}
+\subsubsection* {State Variables}
+$\mathit{lower\_left}$: PointT {\it //coordinates of the lower left corner of the region}\\
+$\mathit{width}$: real {\it //width of the rectangular region}\\
+$\mathit{height}$: real {\it //height of the rectangular region}
+\subsubsection* {State Invariant}
+None
+\subsubsection* {Assumptions}
+The RegionT constructor is called for each abstract object before any other access routine is called for that
+object.  The constructor can only be called once.
+\subsubsection* {Access Routine Semantics}
+\noindent RegionT($p, w, h$):
+\begin{itemize}
+\item transition: $\mathit{lower\_left}, \mathit{width}, \mathit{height} := p, w, h$
+\item output: $out := \mathit{self}$
+\item exception $exc := ((\neg(p.xcrd()+w \leq \mbox{Constants.MAX\_X}) \vee \neg(p.ycrd()+h \\ \indent \leq \mbox{Contants.MAX\_X}) \Rightarrow \mbox{InvalidRegionException})$\\
+\end{itemize}
+\noindent pointInRegion($p$):
+\begin{itemize}
+\item output: $\mathit{out} := \exists(i:\mathbb{N}, j:\mathbb{N}  \mid i \in [0..w] \wedge j \in [0..h] : p.dist(pointT(i,j)) \leq Constants.TOLERANCE)$\\
+\item exception: none
+\end{itemize}
+\newpage
+
+
+\section* {Generic List Module}
+\subsection* {Generic Template Module}
+GenericList(T)
+\subsection* {Uses}
+N/A
+\subsection* {Syntax}
+\subsubsection* {Exported Types}
+GenericList(T) = ?
+\subsubsection* {Exported Constants}
+MAX\_SIZE = 100
+\subsubsection* {Exported Access Programs}
+\begin{tabular}{| l | l | l | p{5cm} |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+GenericList & ~ & GenericList & ~\\
+\hline
+add & integer, T & ~ & FullSequenceException,\newline InvalidPositionException\\
+\hline
+del & integer & ~ & InvalidPositionException\\
+\hline
+setval & integer, T & ~ & InvalidPositionException\\
+\hline
+getval & integer & T & InvalidPositionException\\
+\hline
+size & ~ & integer & ~\\
+\hline
+\end{tabular}
+\subsection* {Semantics}
+\subsubsection* {State Variables}
+$s$: sequence of T
+\subsubsection* {State Invariant}
+$| s | \leq \mathrm{MAX\_SIZE}$
+\subsubsection* {Assumptions}
+The GenericList() constructor is called for each abstract object before any other access routine is called for that
+object.  The constructor can only be called once.
+\subsubsection* {Access Routine Semantics}
+GenericList():
+\begin{itemize}
+\item transition: $\mathit{self}.s := < >$
+\item output: $\mathit{out} := \mathit{self}$
+\item exception: none
+\end{itemize}
+\noindent add($i, p$):
+\begin{itemize}
+\item transition: $s := s[0..i-1] || <p> || s[i..|s|-1]$
+\item exception: $exc := (|s| = \mathrm{MAX\_SIZE} \Rightarrow  \mathrm{FullSequenceException} ~ | ~ i \notin [0..|s|] \Rightarrow
+\mathrm{InvalidPositionException})$
+\end{itemize}
+\noindent del($i$):
+\begin{itemize}
+\item transition: $s := s[0..i-1] || s[i+1..|s|-1]$
+\item exception:  $exc := (i \notin [0..|s|-1] \Rightarrow \mathrm{InvalidPositionException})$
+\end{itemize}
+\noindent setval($i, p$):
+\begin{itemize}
+\item transition: $s[i] := p$
+\item exception: $exc := (i \notin [0..|s|-1] \Rightarrow \mathrm{InvalidPositionException})$
+\end{itemize}
+\noindent getval($i$):
+\begin{itemize}
+\item output: $out := s[i]$
+\item exception: $exc := (i \notin [0..|s|-1] \Rightarrow \mathrm{InvalidPositionException})$
+\end{itemize}
+\noindent size():
+\begin{itemize}
+\item output: $out := | s |$
+\item exception: none
+\end{itemize}
+\newpage
+
+
+\section* {Path Module}
+\subsection* {Template Module}
+PathT is GenericList(PointT)
+\section* {Obstacles Module}
+\subsection* {Template Module}
+Obstacles is GenericList(RegionT)
+\section* {Destinations Module}
+\subsection* {Template Module}
+Destinations is GenericList(RegionT)
+\section* {SafeZone Module}
+\subsection* {Template Module}
+SafeZone extends GenericList(RegionT)
+\subsection*{Exported Constants}
+MAX\_SIZE = 1
+%\section* {Path List Module}
+%\subsection* {Template Module}
+%PathListT is GenericList(PathT)
+\newpage
+
+
+\section* {Map Module}
+\subsection* {Module}
+Map
+\subsection* {Uses}
+Obstacles, Destinations, SafeZone
+\subsection* {Syntax}
+\subsubsection* {Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+init & Obstacles, Destinations, SafeZone & ~ & ~\\
+\hline
+get\_obstacles & ~ & Obstacles & ~\\
+\hline
+get\_destinations & ~ & Destinations & ~\\
+\hline
+get\_safeZone & ~ & SafeZone & ~\\
+\hline
+\end{tabular}
+\subsection* {Semantics}
+\subsubsection*{State Variables}
+$\mathit{obstacles}:$ Obstacles\\
+$\mathit{destinations}:$ Destinations\\
+$\mathit{safeZone}:$ SafeZone
+\subsubsection* {State Invariant}
+none
+\subsubsection* {Assumptions}
+The access routine init() is called for the abstract object before any other access routine is called.  If the map is
+changed, init() can be called again to change the map.
+\subsubsection* {Access Routine Semantics}
+\noindent init($o, d, sz$):
+\begin{itemize}
+\item transition: $\mathit{obstacles}, \mathit{destinations}, \mathit{safeZone}  := o, d, sz$
+\item exception: none
+\end{itemize}
+\noindent get\_obstacles():
+\begin{itemize}
+\item output: $\mathit{out} := \mathit{obstacles}$
+\item exception: none
+\end{itemize}
+\noindent get\_destinations():
+\begin{itemize}
+\item output: $\mathit{out} := \mathit{destinations}$
+\item exception: none
+\end{itemize}
+\noindent get\_safeZone():
+\begin{itemize}
+\item output: $\mathit{out} := \mathit{safeZone}$
+\item exception: none
+\end{itemize}
+\newpage
+
+
+
+\section* {Path Calculation Module}
+\subsection* {Module}
+PathCalculation
+\subsection* {Uses}
+Constants, PointT, RegionT, PathT, Obstacles, Destinations, SafeZone, Map
+\subsection* {Syntax}
+\subsubsection* {Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+is\_validSegment & PointT, PointT & boolean & ~\\
+\hline
+is\_validPath & PathT & boolean & ~\\
+\hline
+is\_shortestPath & PathT & boolean & ~\\
+\hline
+totalDistance & PathT & real & ~\\
+\hline
+totalTurns & PathT & integer & ~\\
+\hline
+estimatedTime & PathT & real & ~\\
+\hline
+%sortPathList & PathListT & PathListT & ~\\
+%\hline
+\end{tabular}
+\subsection* {Semantics}
+\subsubsection*{State Variables}
+none
+\subsubsection* {State Invariant}
+none
+\subsubsection* {Assumptions}
+none
+\subsubsection* {Access Routine Semantics}
+
+\noindent  is\_validSegment ($p1, p2$):
+\begin{itemize}
+%\item transition: $ $
+\item output: $\mathit{out} := \forall(i : \mathbb{N} | i \in [0 .. \mbox{Map.\mbox{get\_obstacles}.\mbox{size}} - 1] : Map.\mbox{getval}(i).\mbox{pointInRegion}(p1..p2)$
+\item exception: none
+\end{itemize}
+
+\noindent  is\_validPath ($p_1$, $p_2$):
+\begin{itemize}
+%\item transition: $ $
+\item output: $ $
+\item exception: none
+\end{itemize}
+
+\noindent  is\_shortestPath ($p$):
+\begin{itemize}
+%\item transition: $ $
+\item output: $\mathit{out} := \forall(i: \mathbb{N} | i \in [0 .. \mbox{Map.get\_destinations}.\mbox{size} - 1] \land Map.\mbox{get\_destinations}[i].\mbox{is\_validPath} : p.\mbox{dist}(Map.\mbox{get\_destinations}[i].\mbox{getval}) < p.\mbox{dist}(Map.\mbox{get\_destinations}[i+1].\mbox{getval})) $
+\item exception: none
+\end{itemize}
+
+\noindent  totalDistance ($p$):
+\begin{itemize}
+%\item transition: $ $
+\item output: $\mathit{out} := +(i:\mathbb{Z} | 0 \leq i \leq (p.size()-1):p.getval(i).dist(p.getval(i+1)))$
+\item exception: none
+\end{itemize}
+
+\noindent  totalTurns ($p$:
+\begin{itemize}
+%\item transition: $ $
+\item output: $\mathit{out} := +(i : \mathbb{N} | i \in [0 .. p.\mbox{size}] \land  (p[i].\mbox{ycrd} - p[i-1].\mbox{ycrd} )/ (p[i].\mbox{xcrd} - p[i-1].\mbox{xcrd}) != 0 : 1)$
+\item exception: none
+\end{itemize}
+
+\noindent  estimatedTime ($p$):
+\begin{itemize}
+%\item transition: $ $
+\item output: $\mathit{out} := +(i : \mathbb{N} |  i \in [0 .. p.\mbox{size} -1] \land  (p[i].\mbox{ycrd} - p[i-1].\mbox{ycrd} )/ (p[i].\mbox{xcrd} - p[i-1].\mbox{xcrd}) = 0 : 1 ) + p.\mbox{totalTurns}$
+\item exception: none
+\end{itemize}
+
+
+
+\newpage
+\section{Critique of Module Interface}
+
+\end {document}
